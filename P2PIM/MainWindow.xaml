@@ -10,7 +10,7 @@
             <Label Content="Chat Content:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="115"/>
             <TextBox x:Name="tbChatContent" Text="{Binding ChatContent, Mode=TwoWay}" HorizontalAlignment="Left" Height="172" Margin="10,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="357"/>
             <Label Content="Message To Send:" HorizontalAlignment="Left" Margin="10,236,0,0" VerticalAlignment="Top" Width="131" RenderTransformOrigin="0.504,-0.538"/>
-            <TextBox x:Name="tbMessageSend" HorizontalAlignment="Left" Height="75" Margin="10,267,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="357"/>
+            <TextBox x:Name="tbMessageSend" TextChanged="tbMessageSend_TextChanged" PreviewTextInput="tbMessageSend_PreviewTextInput" HorizontalAlignment="Left" Height="75" Margin="10,267,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="357"/>
             <Button Content="Send" Click="OnSendMessage" HorizontalAlignment="Left" Margin="251,366,0,0" VerticalAlignment="Top" Width="118" Height="27"/>
         </Grid>
         <Grid HorizontalAlignment="Left" Height="416" Margin="399,10,0,0" VerticalAlignment="Top" Width="229">

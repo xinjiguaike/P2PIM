@@ -22,7 +22,7 @@ namespace P2PIM
     public partial class MainWindow : Window
     {
         private AsyncService serviceAsync;
-
+        private bool isInputting;
 
         public MainWindow()
         {
@@ -62,12 +62,22 @@ namespace P2PIM
 
         private async void Window_KeyUp(object sender, KeyEventArgs e)
         {
-            if((e.Key == Key.Enter) && tbMessageSend.IsFocused)
+            if((e.Key == Key.Enter) && tbMessageSend.IsFocused && !isInputting)
             {
                 await serviceAsync.SendMessageAsync(tbMessageSend.Text);
                 tbMessageSend.Text = "";
             }
              
+        }
+
+        private void tbMessageSend_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            isInputting = false;
+        }
+
+        private void tbMessageSend_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            isInputting = true;
         }
 
     }
