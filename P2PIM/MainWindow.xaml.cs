@@ -36,7 +36,7 @@ namespace P2PIM
             btnStartListen.IsEnabled = false;
             btnStopListen.IsEnabled = true;
             lbListening.Visibility = Visibility.Visible;
-            await serviceAsync.StartConnectAsync();
+            await serviceAsync.StartListenAsync();
         }
 
         private async void OnSendMessage(object sender, RoutedEventArgs e)
@@ -47,7 +47,7 @@ namespace P2PIM
 
         private void OnStopListen(object sender, RoutedEventArgs e)
         {
-            serviceAsync.StopConnect();
+            serviceAsync.StopListen();
             btnStartListen.IsEnabled = true;
             btnStopListen.IsEnabled = false;
             lbListening.Visibility = Visibility.Hidden;
@@ -55,9 +55,8 @@ namespace P2PIM
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            serviceAsync.StopConnect();
-            serviceAsync.StopListen();
             Settings.Default.Save();
+            serviceAsync.StopConnect();
             serviceAsync.StopListen();
         }
 

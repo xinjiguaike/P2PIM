@@ -18,11 +18,11 @@
             <TextBox x:Name="tbTargetIP" Text="{Binding TargetIP, Source={x:Static p:Settings.Default}, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="10,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="186"/>
             <Label Content="Nick Name:" HorizontalAlignment="Left" Margin="10,81,0,0" VerticalAlignment="Top" Width="96"/>
             <TextBox x:Name="tbNickName" Text="{Binding NickName, Source={x:Static p:Settings.Default}, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="10,112,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="186"/>
-            <Button x:Name="btnStartListen" Content="Start Connect" HorizontalAlignment="Left" Margin="10,153,0,0" VerticalAlignment="Top" Width="134" Click="OnStartListen"/>
-            <Button x:Name="btnStopListen" Content="Stop Connect" IsEnabled="False" HorizontalAlignment="Left" Margin="10,190,0,0" VerticalAlignment="Top" Width="134" Click="OnStopListen"/>
+            <Button x:Name="btnStartListen" Content="Start Listen" HorizontalAlignment="Left" Margin="10,153,0,0" VerticalAlignment="Top" Width="134" Click="OnStartListen"/>
+            <Button x:Name="btnStopListen" Content="Stop Listen" IsEnabled="False" HorizontalAlignment="Left" Margin="10,190,0,0" VerticalAlignment="Top" Width="134" Click="OnStopListen"/>
         </Grid>
         <StatusBar HorizontalAlignment="Left" Height="40" Margin="0,431,0,0" VerticalAlignment="Top" Width="638">
-            <Label x:Name="lbListening" Content="Connecting..." Width="97" Visibility="Hidden"/>
+            <Label x:Name="lbListening" Content="Listening..." Width="97" Visibility="Hidden"/>
         </StatusBar>
 
     </Grid>
