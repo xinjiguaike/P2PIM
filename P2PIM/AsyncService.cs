@@ -57,9 +57,12 @@ namespace P2PIM
             listener.Start();
             try
             {
+                while(true)
+                {
                     tcpClient = await listener.AcceptTcpClientAsync();
                     await ReceiveChatMessageAsync();
-                }
+                }     
+            }
             catch(Exception e)
             {
                 Trace.TraceError("Rudy Trace => Listen Exception: {0}", e.Message);
