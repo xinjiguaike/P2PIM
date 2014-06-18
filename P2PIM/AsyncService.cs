@@ -81,7 +81,8 @@ namespace P2PIM
 
         public void StopListen()
         {
-            listener.Stop();
+            if (listener != null)
+                listener.Stop();
         }
 
         public void StopConnect()
