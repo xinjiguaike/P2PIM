@@ -57,8 +57,11 @@ namespace P2PIM
             listener.Start();
             try
             {
-                tcpClient = await listener.AcceptTcpClientAsync();
-                await ShowChatMessageAsync();
+                while(true)
+                {
+                    tcpClient = await listener.AcceptTcpClientAsync();
+                    await ReceiveChatMessageAsync();
+                }
             }
             catch(Exception e)
             {
@@ -95,12 +98,11 @@ namespace P2PIM
             }
         }
 
-        public async Task ShowChatMessageAsync()
+        public async Task ReceiveChatMessageAsync()
         {
-            string clientEndPoint = tcpClient.Client.RemoteEndPoint.ToString();
-             
             try
             {
+                string clientEndPoint = tcpClient.Client.RemoteEndPoint.ToString();
                 NetworkStream networkStream = tcpClient.GetStream();
                 StreamReader reader = new StreamReader(networkStream);
                 while (true)
@@ -135,6 +137,8 @@ namespace P2PIM
         {
             try
             {
+                await StartConnectAsync();
+
                 Trace.TraceInformation("Rudy Trace => SendMessageAsync Message: {0}", MessageToSend);
                 if (MessageToSend == "")
                 {
@@ -143,7 +147,7 @@ namespace P2PIM
                 }
 
                 await clientWriter.WriteLineAsync(MessageToSend);
-                MessageToSend = "";
+                client.Close();
             }
             catch (Exception e)
             {

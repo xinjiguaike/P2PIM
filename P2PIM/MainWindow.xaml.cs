@@ -31,7 +31,7 @@ namespace P2PIM
             this.DataContext = serviceAsync;
         }
 
-        private async void OnStartConnect(object sender, RoutedEventArgs e)
+        private async void OnStartListen(object sender, RoutedEventArgs e)
         {
             btnStartListen.IsEnabled = false;
             btnStopListen.IsEnabled = true;
@@ -42,9 +42,10 @@ namespace P2PIM
         private async void OnSendMessage(object sender, RoutedEventArgs e)
         {
             await serviceAsync.SendMessageAsync();
+            tbMessageSend.Text = "";
         }
 
-        private void OnStopConnect(object sender, RoutedEventArgs e)
+        private void OnStopListen(object sender, RoutedEventArgs e)
         {
             serviceAsync.StopConnect();
             btnStartListen.IsEnabled = true;
@@ -64,11 +65,6 @@ namespace P2PIM
         {
             if((e.Key == Key.Enter) && tbMessageSend.IsFocused)
                 await serviceAsync.SendMessageAsync();
-        }
-
-        private async void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            await serviceAsync.StartListenAsync();
         }
 
     }
