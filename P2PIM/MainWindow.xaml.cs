@@ -41,8 +41,8 @@ namespace P2PIM
 
         private async void OnSendMessage(object sender, RoutedEventArgs e)
         {
-            await serviceAsync.SendMessageAsync();
-            
+            await serviceAsync.SendMessageAsync(tbMessageSend.Text);
+            tbMessageSend.Text = "";
         }
 
         private void OnStopListen(object sender, RoutedEventArgs e)
@@ -64,7 +64,7 @@ namespace P2PIM
         {
             if((e.Key == Key.Enter) && tbMessageSend.IsFocused)
             {
-                await serviceAsync.SendMessageAsync();
+                await serviceAsync.SendMessageAsync(tbMessageSend.Text);
                 tbMessageSend.Text = "";
             }
              

@@ -35,17 +35,6 @@ namespace P2PIM
             }
         }
 
-        private string _messageToSend;
-        public string MessageToSend
-        {
-            get { return _messageToSend; }
-            set
-            {
-                _messageToSend = value;
-                OnPropertyChanged("MessageToSend");
-            }
-        }
-
         public AsyncService()
         {
             port = 5000;
@@ -134,20 +123,20 @@ namespace P2PIM
         }
 
 
-        public async Task SendMessageAsync()
+        public async Task SendMessageAsync(string Message)
         {
             try
             {
                 await StartConnectAsync();
 
-                Trace.TraceInformation("Rudy Trace => SendMessageAsync Message: {0}", MessageToSend);
-                if (MessageToSend == "")
+                Trace.TraceInformation("Rudy Trace => SendMessageAsync Message: {0}", Message);
+                if (Message == "")
                 {
                     MessageBox.Show("You can not send the empty message!");
                     return;
                 }
 
-                await clientWriter.WriteLineAsync(MessageToSend);
+                await clientWriter.WriteLineAsync(Message);
                 client.Close();
             }
             catch (Exception e)
