@@ -31,12 +31,12 @@ namespace P2PIM
             this.DataContext = serviceAsync;
         }
 
-        private async void OnStartListen(object sender, RoutedEventArgs e)
+        private async void OnStartConnect(object sender, RoutedEventArgs e)
         {
             btnStartListen.IsEnabled = false;
             btnStopListen.IsEnabled = true;
             lbListening.Visibility = Visibility.Visible;
-            await serviceAsync.StartListenAsync();
+            await serviceAsync.StartConnectAsync();
         }
 
         private async void OnSendMessage(object sender, RoutedEventArgs e)
@@ -44,9 +44,9 @@ namespace P2PIM
             await serviceAsync.SendMessageAsync();
         }
 
-        private void OnStopListen(object sender, RoutedEventArgs e)
+        private void OnStopConnect(object sender, RoutedEventArgs e)
         {
-            serviceAsync.StopListen();
+            serviceAsync.StopConnect();
             btnStartListen.IsEnabled = true;
             btnStopListen.IsEnabled = false;
             lbListening.Visibility = Visibility.Hidden;
@@ -54,6 +54,8 @@ namespace P2PIM
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            serviceAsync.StopConnect();
+            serviceAsync.StopListen();
             Settings.Default.Save();
             serviceAsync.StopListen();
         }

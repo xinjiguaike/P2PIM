@@ -133,7 +133,6 @@ namespace P2PIM
 
         public async Task SendMessageAsync()
         {
-            await StartConnectAsync();
             try
             {
                 Trace.TraceInformation("Rudy Trace => SendMessageAsync Message: {0}", MessageToSend);
@@ -145,7 +144,6 @@ namespace P2PIM
 
                 await clientWriter.WriteLineAsync(MessageToSend);
                 MessageToSend = "";
-                client.Close();
             }
             catch (Exception e)
             {
