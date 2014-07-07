@@ -24,6 +24,5 @@
         <StatusBar HorizontalAlignment="Left" Height="40" Margin="0,431,0,0" VerticalAlignment="Top" Width="638">
             <Label x:Name="lbListening" Content="Listening..." Width="97" Visibility="Hidden"/>
         </StatusBar>
-
     </Grid>
 </Window>
