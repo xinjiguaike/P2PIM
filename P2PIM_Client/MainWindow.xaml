@@ -1,0 +1,43 @@
+﻿<Window x:Class="P2PIM_Client.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="535" Width="356">
+    <Window.Resources>
+        <DataTemplate x:Key="LocationCellTemplate">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock HorizontalAlignment="Left" Text="{Binding Path=LocalIP}"/>
+                <TextBlock HorizontalAlignment="Left" Text=":"/>
+                <TextBlock HorizontalAlignment="Left" Text="{Binding Path=Port}"/>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+    
+    <Grid>
+        <Label Content="Server" HorizontalAlignment="Left" Margin="36,24,0,0" VerticalAlignment="Top" Width="55"/>
+        <TextBox HorizontalAlignment="Left" TextAlignment="Center" Height="23" Margin="112,27,0,0" TextWrapping="Wrap" Text="10.224.202.82" VerticalAlignment="Top" Width="123"/>
+        <TextBox HorizontalAlignment="Left" TextAlignment="Center" Height="23" Margin="260,27,0,0" TextWrapping="Wrap" Text="11234" VerticalAlignment="Top" Width="49"/>
+        <Label Content=":" HorizontalAlignment="Left" Margin="241,25,0,0" VerticalAlignment="Top" Width="19" Height="23"/>
+        <Label Content="Local IP" HorizontalAlignment="Left" Margin="36,108,0,0" VerticalAlignment="Top" Width="55"/>
+        <TextBox HorizontalAlignment="Left" TextAlignment="Center" Height="23" Margin="112,111,0,0" TextWrapping="Wrap" Text="10.224.202.82" VerticalAlignment="Top" Width="123"/>
+        <TextBox HorizontalAlignment="Left" TextAlignment="Center" Height="23" Margin="260,111,0,0" TextWrapping="Wrap" Text="11234" VerticalAlignment="Top" Width="49"/>
+        <Label Content=":" HorizontalAlignment="Left" Margin="241,108,0,0" VerticalAlignment="Top" Width="19" Height="23"/>
+        <Label Content="UserName" HorizontalAlignment="Left" Margin="36,69,0,0" VerticalAlignment="Top" Width="76"/>
+        <TextBox HorizontalAlignment="Left" TextAlignment="Center" Height="23" Margin="112,69,0,0" TextWrapping="Wrap" Text="Rudy" VerticalAlignment="Top" Width="123"/>
+        <Button Content="Login" HorizontalAlignment="Left" Margin="71,154,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button Content="Logout" HorizontalAlignment="Left" Margin="194,154,0,0" VerticalAlignment="Top" Width="75"/>
+        <Label Content="Online Users :" HorizontalAlignment="Left" Margin="36,195,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.5,0.462" Width="110"/>
+        <ListView ItemsSource="{Binding OnlineUserList}" HorizontalAlignment="Left" Height="259" Margin="36,226,0,0" VerticalAlignment="Top" Width="273">
+            <ListView.View>
+                <GridView>
+                        <GridViewColumn Width="120" DisplayMemberBinding="{Binding Path=Name}">
+                            <GridViewColumnHeader Content="User" HorizontalContentAlignment="Left"/>
+                        </GridViewColumn>
+                        <GridViewColumn Width="150" CellTemplate="{StaticResource LocationCellTemplate}">
+                            <GridViewColumnHeader Content="Location" HorizontalContentAlignment="Left"/>
+                        </GridViewColumn>                   
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+    </Grid>
+</Window>

@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P2PIM", "P2PIM\P2PIM.csproj", "{BF1539A2-D2F3-471F-B441-1D0399DD8136}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P2PService", "P2PService\P2PService.csproj", "{8F9E391A-3C1F-4382-A7AF-C3BE82B62247}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P2PIM_Client", "P2PIM_Client\P2PIM_Client.csproj", "{33B09388-556D-404B-93C0-69D467BAD868}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P2PIM_Server", "P2PIM_Server\P2PIM_Server.csproj", "{C2591972-F1C6-466D-9DE8-8C99AF95EC23}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BF1539A2-D2F3-471F-B441-1D0399DD8136}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BF1539A2-D2F3-471F-B441-1D0399DD8136}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BF1539A2-D2F3-471F-B441-1D0399DD8136}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BF1539A2-D2F3-471F-B441-1D0399DD8136}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F9E391A-3C1F-4382-A7AF-C3BE82B62247}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F9E391A-3C1F-4382-A7AF-C3BE82B62247}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F9E391A-3C1F-4382-A7AF-C3BE82B62247}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F9E391A-3C1F-4382-A7AF-C3BE82B62247}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33B09388-556D-404B-93C0-69D467BAD868}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33B09388-556D-404B-93C0-69D467BAD868}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33B09388-556D-404B-93C0-69D467BAD868}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33B09388-556D-404B-93C0-69D467BAD868}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2591972-F1C6-466D-9DE8-8C99AF95EC23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2591972-F1C6-466D-9DE8-8C99AF95EC23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2591972-F1C6-466D-9DE8-8C99AF95EC23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2591972-F1C6-466D-9DE8-8C99AF95EC23}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
