@@ -20,9 +20,26 @@ namespace P2PIM_Server
     /// </summary>
     public partial class MainWindow : Window
     {
+        public Server server;
         public MainWindow()
         {
             InitializeComponent();
+            server = new Server();
+            this.DataContext = server;
+        }
+
+        private async void btnStart_Click(object sender, RoutedEventArgs e)
+        {
+            var task1 = Task.Run(() => server.ListenClientConnect());
+            var task2 = Task.Run(() => server.ReceiveMessage());
+
+            await Task.WhenAll(task1, task2);         
+        }
+
+
+        private void btnStop_Click(object sender, RoutedEventArgs e)
+        {
+          
         }
     }
 }

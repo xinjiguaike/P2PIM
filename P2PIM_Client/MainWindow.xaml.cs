@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,14 +20,36 @@ namespace P2PIM_Client
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    /// 
+    
     public partial class MainWindow : Window
     {
-        public ObservableCollection<User> OnlineUsersList { get; set; }
         public User CurrentUser;
 
         public MainWindow()
         {
             InitializeComponent();
+            
+            CurrentUser = new User();
+            this.DataContext = CurrentUser;
+
+            lvOnlineUser.ItemsSource = CurrentUser.OnlineUsersList;
+        }
+
+        private async void btnLogin_Click(object sender, RoutedEventArgs e)
+        {
+            await CurrentUser.SendLogInOutMessageAsync("login");
+            CurrentUser.ReceiveMessage();
+            btnLogin.IsEnabled = false;
+            btnLogout.IsEnabled = true;
+        }
+
+        private async void btnLogout_Click(object sender, RoutedEventArgs e)
+        {
+            await CurrentUser.SendLogInOutMessageAsync("logout");
+            CurrentUser.ClearOnlineUsersList();
+            btnLogin.IsEnabled = true;
+            btnLogout.IsEnabled = false;
         }
     }
 }

@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P2PIM_Client", "P2PIM_Clien
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P2PIM_Server", "P2PIM_Server\P2PIM_Server.csproj", "{C2591972-F1C6-466D-9DE8-8C99AF95EC23}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testMultiThread", "testMultiThread\testMultiThread.csproj", "{B2153BC6-B68E-47D9-920A-95CA8EBB1C8D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiThreadUI", "MultiThreadUI\MultiThreadUI.csproj", "{B5E71B2E-C6F2-4A7E-BC49-F5B2B96E4056}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{C2591972-F1C6-466D-9DE8-8C99AF95EC23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2591972-F1C6-466D-9DE8-8C99AF95EC23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2591972-F1C6-466D-9DE8-8C99AF95EC23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2153BC6-B68E-47D9-920A-95CA8EBB1C8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2153BC6-B68E-47D9-920A-95CA8EBB1C8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2153BC6-B68E-47D9-920A-95CA8EBB1C8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2153BC6-B68E-47D9-920A-95CA8EBB1C8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5E71B2E-C6F2-4A7E-BC49-F5B2B96E4056}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5E71B2E-C6F2-4A7E-BC49-F5B2B96E4056}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5E71B2E-C6F2-4A7E-BC49-F5B2B96E4056}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5E71B2E-C6F2-4A7E-BC49-F5B2B96E4056}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
