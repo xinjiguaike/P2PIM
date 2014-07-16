@@ -141,7 +141,8 @@ namespace P2PIM_Client
             IsOnline = false;
             Name = "Rudy";
             new Action(async () => await SetLocalIPAsync())();
-            LocalPort = 8080;
+            Random random = new Random();
+            LocalPort = random.Next(1024, 65500);
             ServerIP = "10.224.202.82";
             ServerPort = 4000;
             MsgRecord = "Hello";
@@ -166,27 +167,32 @@ namespace P2PIM_Client
         public async Task SendLogInOutMessageAsync(string actionType)
         {
             string message = string.Format("{0},{1},{2}:{3}", actionType, Name, LocalIP, LocalPort);
-            IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse(ServerIP), ServerPort);
-            UdpClient sendUdpClient = new UdpClient(remoteEndPoint);
+            UdpClient sendUdpClient = new UdpClient(0);
             Byte[] bytesSend = Encoding.UTF8.GetBytes(message);
-            await sendUdpClient.SendAsync(bytesSend, bytesSend.Length);
+
+            Trace.TraceInformation("P2PIM Trace =>Sending message[{0}]...", message);
+
+            IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse(ServerIP), ServerPort);
+            await sendUdpClient.SendAsync(bytesSend, bytesSend.Length, remoteEndPoint);
             sendUdpClient.Close();
+            Trace.TraceInformation("P2PIM Trace =>Send completed.");
         }
 
         public async Task SendChatMessageAsync()
         {
             string[] splitString = ObjChatTo.LocalIPEndPoint.Split(':');
             IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse(splitString[0]), int.Parse(splitString[1]));
-            UdpClient sendUdpClient = new UdpClient(remoteEndPoint);
+            UdpClient sendUdpClient = new UdpClient(0);
             Byte[] bytesSend = Encoding.UTF8.GetBytes(string.Format("chat,{0},{1}", DateTime.Now, ChatContent));
-            await sendUdpClient.SendAsync(bytesSend, bytesSend.Length);
+            await sendUdpClient.SendAsync(bytesSend, bytesSend.Length, remoteEndPoint);
             sendUdpClient.Close();
         }
 
         public async Task ReceiveMessageAsync()
         {
-            IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
-            UdpClient receiveUdpClient = new UdpClient(remoteIPEndPoint);
+            Trace.TraceInformation("Begin reveive message");
+            IPEndPoint localIPEndPoint = new IPEndPoint(IPAddress.Parse(LocalIP), LocalPort);
+            UdpClient receiveUdpClient = new UdpClient(localIPEndPoint);
             while (true)
             {
                 try
@@ -196,7 +202,8 @@ namespace P2PIM_Client
                 catch(Exception ex)
                 {
                     Trace.TraceInformation("P2PIM Trace =>Exception:[{0}]", ex.Message);
-                    receiveUdpClient.Close();
+                    if(receiveUdpClient != null)
+                        receiveUdpClient.Close();
                     break;
                 }
             } 
@@ -204,8 +211,12 @@ namespace P2PIM_Client
 
         public async Task ParseResponseAsync(UdpClient udpClient)
         {
+            Trace.TraceInformation("Parsing response...");
+            //UdpClient udpClient = receiveUdpClient;
             var resultReceived = await udpClient.ReceiveAsync();
+            
             string request = Encoding.UTF8.GetString(resultReceived.Buffer);
+            Trace.TraceInformation("Received string [{0}]", request);
 
             string[] splitString = request.Split(',');
             if (splitString.Length > 1)
@@ -240,16 +251,20 @@ namespace P2PIM_Client
                         OnlineUsersList.Add(new UserInfo(userName, ipEndPoint));
                         break;
                     case "logout":
+                        DisplayUserList();
                         for (int i = 0; i < OnlineUsersList.Count; i++)
                         {
-                            if (OnlineUsersList[i].UserName == userName)
+                            if (OnlineUsersList[i].LocalIPEndPoint.Equals(ipEndPoint))
                             {
+                                Trace.TraceInformation("Remove index=" + i);
                                 OnlineUsersList.RemoveAt(i);
                                 break;
                             }
                         }
-
-                        Trace.TraceInformation(string.Format("User {0}[{1}] exit", userName, ipEndPoint));
+                        
+                        //OnlineUsersList.Remove(new UserInfo(userName, ipEndPoint));
+                        DisplayUserList();
+                        Trace.TraceInformation("User {0}[{1}] exit", userName, ipEndPoint);
                         break;
                     default:
                         Trace.TraceInformation("Request type is invalid");
@@ -262,13 +277,25 @@ namespace P2PIM_Client
             }
         }
 
+        public void DisplayUserList()
+        {
+            Trace.TraceInformation(">>>Begin Display");
+            foreach(UserInfo user in OnlineUsersList)
+            {
+                Trace.TraceInformation("{0}[{1}]", user.UserName, user.LocalIPEndPoint);
+            }
+            Trace.TraceInformation(">>>End Display");
+        }
+
         public async Task GetOnlineUsersListAsync(StreamReader readerStream)
         {
+            Trace.TraceInformation("Getting online user list...");
             while(true)
             {
                 try
                 {
-                    string resultReceived = await readerStream.ReadToEndAsync();
+                    string resultReceived = await readerStream.ReadLineAsync();
+                    Trace.TraceInformation("Received message:[{0}] exit", resultReceived);
                     if (resultReceived.EndsWith("end"))
                     {
                         string[] splitString = resultReceived.Split(';');

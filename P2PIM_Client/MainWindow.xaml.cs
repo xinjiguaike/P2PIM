@@ -38,12 +38,12 @@ namespace P2PIM_Client
 
         private async void btnLogin_Click(object sender, RoutedEventArgs e)
         {
-            var task1 = CurrentUser.SendLogInOutMessageAsync("login");
-            var task2 = CurrentUser.ReceiveMessageAsync();
-            await Task.WhenAll(task1, task2);
-
             btnLogin.IsEnabled = false;
             btnLogout.IsEnabled = true;
+
+            var task1 = CurrentUser.SendLogInOutMessageAsync("login");
+            var task2 = CurrentUser.ReceiveMessageAsync();
+            await Task.WhenAll(task1, task2);            
         }
 
         private async void btnLogout_Click(object sender, RoutedEventArgs e)
