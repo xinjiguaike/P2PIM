@@ -140,24 +140,29 @@ namespace P2PIM_Client
         {
             IsOnline = false;
             Name = "Rudy";
-            LocalIP = "192.168.0.10";
+            new Action(async () => await SetLocalIPAsync())();
             LocalPort = 8080;
             ServerIP = "10.224.202.82";
-            ServerPort = 65535;
+            ServerPort = 4000;
             MsgRecord = "Hello";
             OnlineUsersList = new ObservableCollection<UserInfo>();
-            OnlineUsersList.Add(new UserInfo("Rudy", "10.224.202.82:6023"));
-            OnlineUsersList.Add(new UserInfo("Home", "192.168.0.1:4355"));
-            OnlineUsersList.Add(new UserInfo("Office", "173.39.17.56:8080"));
         }
 
-        public async Task LoginAsync()
+        public async Task SetLocalIPAsync()
         {
-            await SendLogInOutMessageAsync("login");
+            string hostName = Dns.GetHostName();
+            IPHostEntry ipHostInfo = await Dns.GetHostEntryAsync(hostName);
 
+            foreach (IPAddress ip in ipHostInfo.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    LocalIP = ip.ToString();
+                    return;
+                }
+            }
+            throw new Exception("No IPv4 address for server");
         }
-
-
         public async Task SendLogInOutMessageAsync(string actionType)
         {
             string message = string.Format("{0},{1},{2}:{3}", actionType, Name, LocalIP, LocalPort);
@@ -178,7 +183,7 @@ namespace P2PIM_Client
             sendUdpClient.Close();
         }
 
-        public void ReceiveMessage()
+        public async Task ReceiveMessageAsync()
         {
             IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
             UdpClient receiveUdpClient = new UdpClient(remoteIPEndPoint);
@@ -186,16 +191,15 @@ namespace P2PIM_Client
             {
                 try
                 {
-                    new Action(async () => await ParseResponseAsync(receiveUdpClient))();
+                    await ParseResponseAsync(receiveUdpClient);
                 }
-                catch
+                catch(Exception ex)
                 {
+                    Trace.TraceInformation("P2PIM Trace =>Exception:[{0}]", ex.Message);
                     receiveUdpClient.Close();
                     break;
                 }
-            }
-
-            
+            } 
         }
 
         public async Task ParseResponseAsync(UdpClient udpClient)
@@ -224,7 +228,7 @@ namespace P2PIM_Client
                             tcpClient.Connect(ServerIP, int.Parse(splitString[1]));
                             NetworkStream networkStream = tcpClient.GetStream();
                             StreamReader reader = new StreamReader(networkStream);
-                            await GetOnlineUsersList(reader);
+                            new Action(async() =>await GetOnlineUsersListAsync(reader))();
                         }
                         catch(Exception ex)
                         {
@@ -258,7 +262,7 @@ namespace P2PIM_Client
             }
         }
 
-        public async Task GetOnlineUsersList(StreamReader readerStream)
+        public async Task GetOnlineUsersListAsync(StreamReader readerStream)
         {
             while(true)
             {

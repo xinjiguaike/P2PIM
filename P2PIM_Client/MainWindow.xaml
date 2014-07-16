@@ -12,7 +12,7 @@
         <TextBox x:Name="tbLocalPort" HorizontalAlignment="Left" TextAlignment="Center" Height="23" Margin="260,111,0,0" TextWrapping="Wrap" Text="{Binding LocalPort}" VerticalAlignment="Top" Width="49"/>
         <Label Content=":" HorizontalAlignment="Left" Margin="241,108,0,0" VerticalAlignment="Top" Width="19" Height="23"/>
         <Label Content="UserName" HorizontalAlignment="Left" Margin="36,69,0,0" VerticalAlignment="Top" Width="76"/>
-        <TextBox x:Name="tbUserName" HorizontalAlignment="Left" TextAlignment="Center" Height="23" Margin="112,69,0,0" TextWrapping="Wrap" Text="{Binding Name}" VerticalAlignment="Top" Width="123"/>
+        <TextBox x:Name="tbUserName" Text="{Binding Name, Mode=TwoWay}" HorizontalAlignment="Left" TextAlignment="Center" Height="23" Margin="112,69,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="123"/>
         <Button x:Name="btnLogin" Content="Login" HorizontalAlignment="Left" Margin="71,154,0,0" VerticalAlignment="Top" Width="75" Click="btnLogin_Click"/>
         <Button x:Name="btnLogout" IsEnabled="False" Content="Logout" HorizontalAlignment="Left" Margin="194,154,0,0" VerticalAlignment="Top" Width="75" Click="btnLogout_Click"/>
         <Label Content="Online Users :" HorizontalAlignment="Left" Margin="36,195,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.5,0.462" Width="110"/>

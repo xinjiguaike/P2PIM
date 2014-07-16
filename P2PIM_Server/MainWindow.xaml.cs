@@ -30,9 +30,8 @@ namespace P2PIM_Server
 
         private async void btnStart_Click(object sender, RoutedEventArgs e)
         {
-            var task1 = Task.Run(() => server.ListenClientConnect());
-            var task2 = Task.Run(() => server.ReceiveMessage());
-
+            var task1 = server.ReceiveMessage();
+            var task2 = Task.Run(() => server.ListenClientConnect());
             await Task.WhenAll(task1, task2);         
         }
 
