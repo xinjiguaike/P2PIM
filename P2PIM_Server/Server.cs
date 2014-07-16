@@ -108,6 +108,7 @@ namespace P2PIM_Server
             {
                 try
                 {
+                    Trace.TraceInformation("P2PIM Trace =>Accepting request...");
                     tcpClient = listener.AcceptTcpClient();
                     Log(string.Format("Accept tcp connect request from [{0}]", tcpClient.Client.RemoteEndPoint));
                     new Action(async () => await SendOnlineUsersList(tcpClient))();//Run in parallel
@@ -124,8 +125,8 @@ namespace P2PIM_Server
 
         public async Task ReceiveMessage() // Receive thread
         {
-            IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
-            UdpClient receiveUdpClient = new UdpClient(remoteIPEndPoint);
+            IPEndPoint serverIPEndPoint = new IPEndPoint(IPAddress.Parse(ServerIP), ServerPort);
+            UdpClient receiveUdpClient = new UdpClient(serverIPEndPoint);
             while(true)
             {
                 try
@@ -158,20 +159,17 @@ namespace P2PIM_Server
                 switch(requestType)
                 {
                     case "login":
-                        Log(string.Format("User {0}[{1}] request to log in", userName, ipEndPoint));
-                        UserInfo newUser = new UserInfo(userName, ipEndPoint);
-                        await SendAcceptAsync(newUser);
-
-                        OnlineUsersList.Add(newUser);
                         Log(string.Format("User {0}[{1}] join", userName, ipEndPoint));
-
-                        await SendBroadcastAsync(request);
+                        UserInfo newUser = new UserInfo(userName, ipEndPoint);
+                        OnlineUsersList.Add(newUser);
+                        await SendAcceptAsync(newUser);
+                        await SendBroadcastAsync(request, ipEndPoint);
                         break;
                     case "logout":
                         Log(string.Format("User {0}[{1}] request to log out", userName, ipEndPoint));
                         for (int i = 0; i < OnlineUsersList.Count; i++)
                         {
-                            if (OnlineUsersList[i].UserName == userName)
+                            if (OnlineUsersList[i].LocalIPEndPoint.Equals(ipEndPoint))
                             {
                                 OnlineUsersList.RemoveAt(i);
                                 break;
@@ -180,7 +178,7 @@ namespace P2PIM_Server
 
                         Log(string.Format("User {0}[{1}] exit", userName, ipEndPoint));
 
-                        await SendBroadcastAsync(request);
+                        await SendBroadcastAsync(request, ipEndPoint);
                         break;
                     default:
                         Log("Request type is invalid");
@@ -204,6 +202,7 @@ namespace P2PIM_Server
             {
                 string ip = splitString[0];
                 int port = int.Parse(splitString[1]);
+                Log(string.Format("Sending accept to user {0}:{1}", ip, port));
                 IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
                 await udpClient.SendAsync(bytesSend, bytesSend.Length, remoteIPEndPoint);
                 udpClient.Close();
@@ -215,14 +214,22 @@ namespace P2PIM_Server
             
         }
 
-        private async Task SendBroadcastAsync(string Message)
+        private async Task SendBroadcastAsync(string Message, string ipEndPoint)
         {
-            Log(string.Format("Broadcast [{0}] to everyone", Message));
+            Log(string.Format("Broadcast [{0}] to the others", Message));
 
             UdpClient udpClient = new UdpClient(0);
             Byte[] bytesSend = Encoding.UTF8.GetBytes(Message);
-            IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Broadcast, 15000);
-            await udpClient.SendAsync(bytesSend, bytesSend.Length, remoteIPEndPoint);
+            foreach (UserInfo user in OnlineUsersList)
+            {
+                if (!user.LocalIPEndPoint.Equals(ipEndPoint))
+                {
+                    string[] splitString = user.LocalIPEndPoint.Split(':');
+                    IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Parse(splitString[0]), int.Parse(splitString[1]));
+                    await udpClient.SendAsync(bytesSend, bytesSend.Length, remoteIPEndPoint);
+                }
+            }
+
             udpClient.Close();
         }
 
@@ -241,6 +248,7 @@ namespace P2PIM_Server
             clientWriter.AutoFlush = true;
 
             Log(string.Format("Send online userlist to [{0}]", newTcpClient.Client.RemoteEndPoint));
+            Log(string.Format("Online user list: [{0}]", strUserList));
             await clientWriter.WriteLineAsync(strUserList);
 
             clientWriter.Close();

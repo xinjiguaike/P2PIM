@@ -9,6 +9,12 @@
         <TextBox HorizontalAlignment="Left" Height="23" Margin="232,338,0,0" TextWrapping="Wrap" Text="{Binding ServerPort, Mode=TwoWay}" VerticalAlignment="Top" Width="53"/>
         <Button Content="Stop" HorizontalAlignment="Left" Margin="442,338,0,0" VerticalAlignment="Top" Width="65" Click="btnStop_Click"/>
         <Button Content="Start" HorizontalAlignment="Left" Margin="353,338,0,0" VerticalAlignment="Top" Width="65" Click="btnStart_Click"/>
-        <TextBox x:Name="lbLog" Text="{Binding LogString, Mode=TwoWay}" IsReadOnly="True" HorizontalAlignment="Left" Height="294" Margin="10,10,0,0" VerticalAlignment="Top" Width="497" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+        <RichTextBox x:Name="lbLog" HorizontalAlignment="Left" Height="294" Margin="10,10,0,0" VerticalAlignment="Top" Width="497" ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <FlowDocument>
+                <Paragraph LineHeight="25" >
+                    <TextBlock Text="{Binding LogString, Mode=TwoWay}"/>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
     </Grid>
 </Window>
