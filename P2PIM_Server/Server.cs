@@ -29,6 +29,7 @@ namespace P2PIM_Server
         public ObservableCollection<string> LogList;
         public ObservableCollection<UserInfo> OnlineUsersList;
         private int tcpPort;
+        private TcpClient tcpClient;
 
         private int _serverPort;
         public int ServerPort
@@ -66,6 +67,7 @@ namespace P2PIM_Server
 
         public Server()
         {
+            TcpClient tcpClient = null;
             Random random = new Random();
             ServerPort = random.Next(1024, 65500);
             OnlineUsersList = new ObservableCollection<UserInfo>();
@@ -102,7 +104,7 @@ namespace P2PIM_Server
             TcpListener listener = new TcpListener(listenPoint);
             Log(string.Format("Start listening on [{0}]...", listenPoint));
             listener.Start();
-            TcpClient tcpClient = null;
+            //TcpClient tcpClient = null;
 
             while(true)
             {
@@ -111,7 +113,7 @@ namespace P2PIM_Server
                     Trace.TraceInformation("P2PIM Trace =>Accepting request...");
                     tcpClient = listener.AcceptTcpClient();
                     Log(string.Format("Accept tcp connect request from [{0}]", tcpClient.Client.RemoteEndPoint));
-                    new Action(async () => await SendOnlineUsersList(tcpClient))();//Run in parallel
+                    new Action(async () => await SendOnlineUsersList())();//Run in parallel
                 }
                 catch
                 {
@@ -233,26 +235,26 @@ namespace P2PIM_Server
             udpClient.Close();
         }
 
-        private async Task SendOnlineUsersList(TcpClient tcpClient)
+        private async Task SendOnlineUsersList()
         {
             string strUserList = "";
-            TcpClient newTcpClient = tcpClient;
+            //TcpClient newTcpClient = tcpClient;
             foreach(UserInfo user in OnlineUsersList)
             {
                 strUserList += user.UserName + "," + user.LocalIPEndPoint + ";";
             }
             strUserList += "end";
 
-            NetworkStream networkStream = newTcpClient.GetStream();
+            NetworkStream networkStream = tcpClient.GetStream();
             StreamWriter clientWriter = new StreamWriter(networkStream);
             clientWriter.AutoFlush = true;
 
-            Log(string.Format("Send online userlist to [{0}]", newTcpClient.Client.RemoteEndPoint));
+            Log(string.Format("Send online userlist to [{0}]", tcpClient.Client.RemoteEndPoint));
             Log(string.Format("Online user list: [{0}]", strUserList));
             await clientWriter.WriteLineAsync(strUserList);
 
             clientWriter.Close();
-            newTcpClient.Close();
+            tcpClient.Close();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
