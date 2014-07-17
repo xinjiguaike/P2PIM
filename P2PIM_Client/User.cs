@@ -214,6 +214,8 @@ namespace P2PIM_Client
             Trace.TraceInformation("Parsing response...");
             //UdpClient udpClient = receiveUdpClient;
             var resultReceived = await udpClient.ReceiveAsync();
+            Trace.TraceInformation("Received result");
+            udpClient.Close();
             
             string request = Encoding.UTF8.GetString(resultReceived.Buffer);
             Trace.TraceInformation("Received string [{0}]", request);

@@ -41,8 +41,9 @@ namespace P2PIM_Client
             btnLogin.IsEnabled = false;
             btnLogout.IsEnabled = true;
 
-            var task1 = CurrentUser.SendLogInOutMessageAsync("login");
-            var task2 = CurrentUser.ReceiveMessageAsync();
+            var task1 = CurrentUser.ReceiveMessageAsync();
+            var task2 = CurrentUser.SendLogInOutMessageAsync("login");
+
             await Task.WhenAll(task1, task2);            
         }
 
