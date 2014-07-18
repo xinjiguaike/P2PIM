@@ -67,7 +67,7 @@ namespace P2PIM_Server
 
         public Server()
         {
-            TcpClient tcpClient = null;
+            tcpClient = null;
             Random random = new Random();
             ServerPort = random.Next(1024, 65500);
             OnlineUsersList = new ObservableCollection<UserInfo>();

@@ -30,26 +30,10 @@ namespace P2PIM_Client
             this.DataContext = serviceAsync;
         }
 
-        private async void OnStartListen(object sender, RoutedEventArgs e)
-        {
-            btnStartListen.IsEnabled = false;
-            btnStopListen.IsEnabled = true;
-            lbListening.Visibility = Visibility.Visible;
-            await serviceAsync.StartListenAsync();
-        }
-
         private async void OnSendMessage(object sender, RoutedEventArgs e)
         {
             await serviceAsync.SendMessageAsync(tbMessageSend.Text);
             tbMessageSend.Text = "";
-        }
-
-        private void OnStopListen(object sender, RoutedEventArgs e)
-        {
-            serviceAsync.StopListen();
-            btnStartListen.IsEnabled = true;
-            btnStopListen.IsEnabled = false;
-            lbListening.Visibility = Visibility.Hidden;
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -78,5 +62,16 @@ namespace P2PIM_Client
         {
             isInputting = true;
         }
+
+        private void btnSend_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnClose_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
     }
 }
