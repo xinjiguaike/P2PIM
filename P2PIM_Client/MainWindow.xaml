@@ -5,7 +5,7 @@
         Closed="Window_Closed">    
     <Grid>
         <Label Content="Server" HorizontalAlignment="Left" Margin="36,24,0,0" VerticalAlignment="Top" Width="55"/>
-        <TextBox x:Name="tbServerIP" HorizontalAlignment="Left" TextAlignment="Center" Height="23" Margin="112,27,0,0" TextWrapping="Wrap" Text="{Binding ServerIP}" VerticalAlignment="Top" Width="123"/>
+        <TextBox x:Name="tbServerIP" HorizontalAlignment="Left" TextAlignment="Center" Height="23" Margin="112,27,0,0" TextWrapping="Wrap" Text="{Binding ServerIp}" VerticalAlignment="Top" Width="123"/>
         <TextBox x:Name="tbServerPort" HorizontalAlignment="Left" TextAlignment="Center" Height="23" Margin="260,27,0,0" TextWrapping="Wrap" Text="{Binding ServerPort}" VerticalAlignment="Top" Width="49"/>
         <Label Content=":" HorizontalAlignment="Left" Margin="241,25,0,0" VerticalAlignment="Top" Width="19" Height="23"/>
         <Label Content="Local IP" HorizontalAlignment="Left" Margin="36,108,0,0" VerticalAlignment="Top" Width="55"/>
@@ -23,7 +23,7 @@
                         <GridViewColumn Width="120" DisplayMemberBinding="{Binding Path=UserName}">
                             <GridViewColumnHeader Content="User" HorizontalContentAlignment="Left"/>
                         </GridViewColumn>
-                        <GridViewColumn Width="150" DisplayMemberBinding="{Binding Path=LocalIPEndPoint}">
+                        <GridViewColumn Width="150" DisplayMemberBinding="{Binding Path=LocalIpEndPoint}">
                             <GridViewColumnHeader Content="Location" HorizontalContentAlignment="Left"/>
                         </GridViewColumn>                   
                 </GridView>

@@ -34,7 +34,7 @@ namespace P2PIM_Client
 
         private ObservableCollection<User> OnlineUsersList;
         private User ObjChatTo;
-        private bool IsOnline;
+        private bool _isOnline;
 
         private string _userName;
         public string UserName
@@ -70,14 +70,15 @@ namespace P2PIM_Client
             }
         }
 
-        private string _serverIP;
-        public string ServerIP
+        private string _serverIp;
+
+        public string ServerIp
         {
-            get { return _serverIP; }
+            get { return _serverIp; }
             set
             {
-                _serverIP = value;
-                OnPropertyChanged("ServerIP");
+                _serverIp = value;
+                OnPropertyChanged("ServerIp");
             }
         }
 
@@ -118,16 +119,16 @@ namespace P2PIM_Client
         {
             InitializeComponent();
 
-            IsOnline = false;
+            _isOnline = false;
             UserName = "Rudy";
             new Action(async () => await SetLocalIpAsync())();
             Random random = new Random();
             LocalPort = random.Next(1024, 65500);
-            ServerIP = "10.224.202.82";
+            ServerIp = "10.224.202.82";
             ServerPort = 5000;
             MsgRecord = "";
             OnlineUsersList = new ObservableCollection<User>();
-            ObjChatTo = new User("Tmac", "");
+            ObjChatTo = null;
             _receiveUdpClient = null;
             _tcpClient = null;
             _readerStream = null;
@@ -141,7 +142,7 @@ namespace P2PIM_Client
             btnLogin.IsEnabled = false;
             btnLogout.IsEnabled = true;
 
-            IsOnline = true;
+            _isOnline = true;
 
             var task1 = ReceiveMessageAsync();
             var task2 = SendLogInOutMessageAsync("login");
@@ -154,7 +155,7 @@ namespace P2PIM_Client
             await SendLogInOutMessageAsync("logout");
             CloseAllConnection();
             ClearOnlineUsersList();
-            IsOnline = false;
+            _isOnline = false;
 
             btnLogin.IsEnabled = true;
             btnLogout.IsEnabled = false;
@@ -162,7 +163,7 @@ namespace P2PIM_Client
 
         private async void Window_Closed(object sender, EventArgs e)
         {
-            if(IsOnline)
+            if(_isOnline)
                 await SendLogInOutMessageAsync("logout");
             CloseAllConnection();
         }
@@ -202,7 +203,7 @@ namespace P2PIM_Client
 
             Trace.TraceInformation("P2PIM Trace =>Sending message[{0}]...", message);
 
-            IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse(ServerIP), ServerPort);
+            IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse(ServerIp), ServerPort);
             await sendUdpClient.SendAsync(bytesSend, bytesSend.Length, remoteEndPoint);
             sendUdpClient.Close();
             Trace.TraceInformation("P2PIM Trace =>Send completed.");
@@ -266,7 +267,7 @@ namespace P2PIM_Client
                         try 
                         {
                             _tcpClient = new TcpClient();
-                            _tcpClient.Connect(ServerIP, int.Parse(splitString[1]));
+                            _tcpClient.Connect(ServerIp, int.Parse(splitString[1]));
                             NetworkStream networkStream = _tcpClient.GetStream();
                             _readerStream= new StreamReader(networkStream);
                             new Action(async() =>await GetOnlineUsersListAsync())();
