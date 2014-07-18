@@ -28,9 +28,9 @@ namespace P2PIM_Client
     
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private UdpClient receiveUdpClient;
-        private TcpClient tcpClient;
-        private StreamReader readerStream;
+        private UdpClient _receiveUdpClient;
+        private TcpClient _tcpClient;
+        private StreamReader _readerStream;
 
         private ObservableCollection<User> OnlineUsersList;
         private User ObjChatTo;
@@ -120,7 +120,7 @@ namespace P2PIM_Client
 
             IsOnline = false;
             UserName = "Rudy";
-            new Action(async () => await SetLocalIPAsync())();
+            new Action(async () => await SetLocalIpAsync())();
             Random random = new Random();
             LocalPort = random.Next(1024, 65500);
             ServerIP = "10.224.202.82";
@@ -128,9 +128,9 @@ namespace P2PIM_Client
             MsgRecord = "";
             OnlineUsersList = new ObservableCollection<User>();
             ObjChatTo = new User("Tmac", "");
-            receiveUdpClient = null;
-            tcpClient = null;
-            readerStream = null;
+            _receiveUdpClient = null;
+            _tcpClient = null;
+            _readerStream = null;
 
             DataContext = this;
             lvOnlineUser.ItemsSource = OnlineUsersList;
@@ -167,19 +167,18 @@ namespace P2PIM_Client
             CloseAllConnection();
         }
 
-        
 
-        public void CloseAllConnection()
+        private void CloseAllConnection()
         {
-            if (receiveUdpClient != null)
-                receiveUdpClient.Close();
-            if (readerStream != null)
-                readerStream.Close();
-            if (tcpClient != null)
-                tcpClient.Close();
+            if (_receiveUdpClient != null)
+                _receiveUdpClient.Close();
+            if (_readerStream != null)
+                _readerStream.Close();
+            if (_tcpClient != null)
+                _tcpClient.Close();
         }
 
-        public async Task SetLocalIPAsync()
+        private async Task SetLocalIpAsync()
         {
             string hostName = Dns.GetHostName();
             IPHostEntry ipHostInfo = await Dns.GetHostEntryAsync(hostName);
@@ -194,7 +193,8 @@ namespace P2PIM_Client
             }
             throw new Exception("No IPv4 address for local machine");
         }
-        public async Task SendLogInOutMessageAsync(string actionType)
+
+        private async Task SendLogInOutMessageAsync(string actionType)
         {
             string message = string.Format("{0},{1},{2}:{3}", actionType, UserName, LocalIP, LocalPort);
             UdpClient sendUdpClient = new UdpClient(0);
@@ -208,9 +208,9 @@ namespace P2PIM_Client
             Trace.TraceInformation("P2PIM Trace =>Send completed.");
         }
 
-        public async Task SendChatMessageAsync()
+        private async Task SendChatMessageAsync()
         {
-            string[] splitString = ObjChatTo.LocalIPEndPoint.Split(':');
+            string[] splitString = ObjChatTo.LocalIpEndPoint.Split(':');
             IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse(splitString[0]), int.Parse(splitString[1]));
             UdpClient sendUdpClient = new UdpClient(0);
             Byte[] bytesSend = Encoding.UTF8.GetBytes(string.Format("chat,{0},{1}", DateTime.Now, ChatContent));
@@ -218,32 +218,32 @@ namespace P2PIM_Client
             sendUdpClient.Close();
         }
 
-        public async Task ReceiveMessageAsync()
+        private async Task ReceiveMessageAsync()
         {
             Trace.TraceInformation("Begin receive message");
-            IPEndPoint localIPEndPoint = new IPEndPoint(IPAddress.Parse(LocalIP), LocalPort);
-            receiveUdpClient = new UdpClient(localIPEndPoint);
+            IPEndPoint localIpEndPoint = new IPEndPoint(IPAddress.Parse(LocalIP), LocalPort);
+            _receiveUdpClient = new UdpClient(localIpEndPoint);
             while (true)
             {
                 try
                 {
-                    await ParseResponseAsync(receiveUdpClient);
+                    await ParseResponseAsync();
                 }
                 catch(Exception ex)
                 {
                     Trace.TraceInformation("P2PIM Trace =>Exception:[{0}]", ex.Message);
-                    if(receiveUdpClient != null)
-                        receiveUdpClient.Close();
+                    if(_receiveUdpClient != null)
+                        _receiveUdpClient.Close();
                     break;
                 }
             } 
         }
 
-        public async Task ParseResponseAsync(UdpClient udpClient)
+        private async Task ParseResponseAsync()
         {
             Trace.TraceInformation("Parsing response...");
 
-            var resultReceived = await receiveUdpClient.ReceiveAsync();
+            var resultReceived = await _receiveUdpClient.ReceiveAsync();
             string request = Encoding.UTF8.GetString(resultReceived.Buffer);
 
             Trace.TraceInformation("Received string [{0}]", request);
@@ -265,36 +265,34 @@ namespace P2PIM_Client
                     case "Accept":
                         try 
                         {
-                            tcpClient = new TcpClient();
-                            tcpClient.Connect(ServerIP, int.Parse(splitString[1]));
-                            NetworkStream networkStream = tcpClient.GetStream();
-                            readerStream= new StreamReader(networkStream);
+                            _tcpClient = new TcpClient();
+                            _tcpClient.Connect(ServerIP, int.Parse(splitString[1]));
+                            NetworkStream networkStream = _tcpClient.GetStream();
+                            _readerStream= new StreamReader(networkStream);
                             new Action(async() =>await GetOnlineUsersListAsync())();
                         }
                         catch(Exception ex)
                         {
-                            if (readerStream != null)
-                                readerStream.Close();
-                            if (tcpClient != null)
-                                tcpClient.Close();
+                            if (_readerStream != null)
+                                _readerStream.Close();
+                            if (_tcpClient != null)
+                                _tcpClient.Close();
 
                             Trace.TraceInformation("Tcp connect failed[Exception: {0}]", ex.Message);
                         }
                         break;
                     case "login":
-                        Trace.TraceInformation(string.Format("User {0}[{1}] join", userName, ipEndPoint));
+                        Trace.TraceInformation("User {0}[{1}] join", userName, ipEndPoint);
                         OnlineUsersList.Add(new User(userName, ipEndPoint));
                         break;
                     case "logout":
                         DisplayUserList();
                         for (int i = 0; i < OnlineUsersList.Count; i++)
                         {
-                            if (OnlineUsersList[i].LocalIPEndPoint.Equals(ipEndPoint))
-                            {
-                                Trace.TraceInformation("Remove index=" + i);
-                                OnlineUsersList.RemoveAt(i);
-                                break;
-                            }
+                            if (!OnlineUsersList[i].LocalIpEndPoint.Equals(ipEndPoint)) continue;
+                            Trace.TraceInformation("Remove index=" + i);
+                            OnlineUsersList.RemoveAt(i);
+                            break;
                         }
                         
                         //OnlineUsersList.Remove(new UserInfo(userName, ipEndPoint));
@@ -312,24 +310,24 @@ namespace P2PIM_Client
             }
         }
 
-        public void DisplayUserList()
+        private void DisplayUserList()
         {
             Trace.TraceInformation(">>>Begin Display");
             foreach(var user in OnlineUsersList)
             {
-                Trace.TraceInformation("{0}[{1}]", user.UserName, user.LocalIPEndPoint);
+                Trace.TraceInformation("{0}[{1}]", user.UserName, user.LocalIpEndPoint);
             }
             Trace.TraceInformation(">>>End Display");
         }
 
-        public async Task GetOnlineUsersListAsync()
+        private async Task GetOnlineUsersListAsync()
         {
             Trace.TraceInformation("Getting online user list...");
             while(true)
             {
                 try
                 {
-                    string resultReceived = await readerStream.ReadLineAsync();
+                    string resultReceived = await _readerStream.ReadLineAsync();
                     Trace.TraceInformation("Received message:[{0}] exit", resultReceived);
                     if (resultReceived.EndsWith("end"))
                     {
@@ -337,7 +335,7 @@ namespace P2PIM_Client
                         for (int i = 0; i < splitString.Length - 1; i++)
                         {
                             string[] userString = splitString[i].Split(',');
-                            User newUser = new User(userString[0], userString[1]);
+                            var newUser = new User(userString[0], userString[1]);
                             OnlineUsersList.Add(newUser);
                         }
                         break;
@@ -350,17 +348,18 @@ namespace P2PIM_Client
                 }
             }
 
-            readerStream.Close();
-            tcpClient.Close();
+            _readerStream.Close();
+            _tcpClient.Close();
         }
 
-        public void ClearOnlineUsersList()
+        private void ClearOnlineUsersList()
         {
             OnlineUsersList.Clear();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged(string propertyName)
+
+        private void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));

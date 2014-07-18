@@ -25,25 +25,26 @@ namespace P2PIM_Client
             }
         }
 
-        private string _localIPEndPoint;
-        public string LocalIPEndPoint
+        private string _localIpEndPoint;
+        public string LocalIpEndPoint
         {
-            get { return _localIPEndPoint; }
+            get { return _localIpEndPoint; }
             set
             {
-                _localIPEndPoint = value;
-                OnPropertyChanged("LocalIPEndPoint");
+                _localIpEndPoint = value;
+                OnPropertyChanged("LocalIpEndPoint");
             }
         }
 
-        public User(string Name, string IPEndPoint)
+        public User(string name, string ipEndPoint)
         {
-            UserName = Name;
-            LocalIPEndPoint = IPEndPoint;
+            UserName = name;
+            LocalIpEndPoint = ipEndPoint;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged(string propertyName)
+
+        private void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
