@@ -10,6 +10,6 @@
         <TextBox HorizontalAlignment="Left" Height="23" Margin="232,338,0,0" TextWrapping="Wrap" Text="{Binding ServerPort, Mode=TwoWay}" VerticalAlignment="Top" Width="53"/>
         <Button x:Name="btnStop" IsEnabled="False" Content="Stop" HorizontalAlignment="Left" Margin="442,338,0,0" VerticalAlignment="Top" Width="65" Click="btnStop_Click"/>
         <Button x:Name="btnStart" Content="Start" HorizontalAlignment="Left" Margin="353,338,0,0" VerticalAlignment="Top" Width="65" Click="btnStart_Click"/>
-        <TextBox x:Name="lbLog" TextWrapping="Wrap" HorizontalAlignment="Left" Height="294" Margin="10,10,0,0" VerticalAlignment="Top" Width="497" VerticalScrollBarVisibility="Auto"/>
+        <TextBox x:Name="lbLog" TextWrapping="Wrap" IsReadOnly="True" HorizontalAlignment="Left" Height="294" Margin="10,10,0,0" VerticalAlignment="Top" Width="497" VerticalScrollBarVisibility="Auto"/>
     </Grid>
 </Window>
