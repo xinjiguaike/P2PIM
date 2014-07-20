@@ -2,16 +2,15 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="WinChat" Height="574" Width="646"
-        Closed="Window_Closed"
         KeyUp="Window_KeyUp">
     <Grid>
         <Grid HorizontalAlignment="Left" Height="450" Margin="0,10,0,0" VerticalAlignment="Top" Width="638">
             <Label Content="Chat Content:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="115"/>
-            <TextBox x:Name="tbChatContent" Text="{Binding ChatContent, Mode=TwoWay}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" Height="274" Margin="10,41,0,0" VerticalAlignment="Top" Width="618"/>
+            <TextBox x:Name="tbChatContent" Text="" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" Height="274" Margin="10,41,0,0" VerticalAlignment="Top" Width="618"/>
             <Label Content="Message To Send:" HorizontalAlignment="Left" Margin="10,334,0,0" VerticalAlignment="Top" Width="131" RenderTransformOrigin="0.504,-0.538"/>
             <TextBox x:Name="tbMessageSend" TextChanged="tbMessageSend_TextChanged" PreviewTextInput="tbMessageSend_PreviewTextInput" HorizontalAlignment="Left" Height="75" Margin="10,365,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="618"/>
-            <Button Content="Send" Click="btnSend_Click" HorizontalAlignment="Left" Margin="508,458,0,-69" VerticalAlignment="Top" Width="85" Height="27"/>
-            <Button Content="Close" Click="btnClose_Click" HorizontalAlignment="Left" Margin="403,458,0,-35" VerticalAlignment="Top" Width="85" Height="27"/>
+            <Button Content="Send" Click="btnSend_Click" HorizontalAlignment="Left" Margin="543,458,0,-35" VerticalAlignment="Top" Width="85" Height="27"/>
+            <Button Content="Close" Click="btnClose_Click" HorizontalAlignment="Left" Margin="427,458,0,-35" VerticalAlignment="Top" Width="85" Height="27"/>
         </Grid>
         <StatusBar HorizontalAlignment="Left" Height="40" Margin="0,504,0,0" VerticalAlignment="Top" Width="638">
             <Label x:Name="lbListening" Content="Listening..." Width="97" Visibility="Hidden"/>

@@ -31,10 +31,10 @@ namespace P2PIM_Client
         private UdpClient _receiveUdpClient;
         private TcpClient _tcpClient;
         private StreamReader _readerStream;
-
-        private ObservableCollection<User> OnlineUsersList;
-        private User ObjChatTo;
         private bool _isOnline;
+        private ObservableCollection<User> _onlineUsersList;
+        private List<WinChat> _winChatList;
+        
 
         private string _userName;
         public string UserName
@@ -48,14 +48,14 @@ namespace P2PIM_Client
             }
         }
 
-        private string _localIP;
-        public string LocalIP
+        private string _localIp;
+        public string LocalIp
         {
-            get { return _localIP; }
+            get { return _localIp; }
             set
             {
-                _localIP = value;
-                OnPropertyChanged("LocalIP");
+                _localIp = value;
+                OnPropertyChanged("LocalIp");
             }
         }
 
@@ -119,22 +119,22 @@ namespace P2PIM_Client
         {
             InitializeComponent();
 
-            _isOnline = false;
             UserName = "Rudy";
             new Action(async () => await SetLocalIpAsync())();
             Random random = new Random();
             LocalPort = random.Next(1024, 65500);
-            ServerIp = "10.224.202.82";
+            ServerIp = "192.168.1.11";
             ServerPort = 5000;
             MsgRecord = "";
-            OnlineUsersList = new ObservableCollection<User>();
-            ObjChatTo = null;
+            _onlineUsersList = new ObservableCollection<User>();
+            _winChatList = new List<WinChat>();
             _receiveUdpClient = null;
             _tcpClient = null;
             _readerStream = null;
+            _isOnline = false;
 
             DataContext = this;
-            lvOnlineUser.ItemsSource = OnlineUsersList;
+            lvOnlineUser.ItemsSource = _onlineUsersList;
         }
 
         private async void btnLogin_Click(object sender, RoutedEventArgs e)
@@ -188,7 +188,7 @@ namespace P2PIM_Client
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    LocalIP = ip.ToString();
+                    LocalIp = ip.ToString();
                     return;
                 }
             }
@@ -197,7 +197,7 @@ namespace P2PIM_Client
 
         private async Task SendLogInOutMessageAsync(string actionType)
         {
-            string message = string.Format("{0},{1},{2}:{3}", actionType, UserName, LocalIP, LocalPort);
+            string message = string.Format("{0},{1},{2}:{3}", actionType, UserName, LocalIp, LocalPort);
             UdpClient sendUdpClient = new UdpClient(0);
             Byte[] bytesSend = Encoding.UTF8.GetBytes(message);
 
@@ -209,20 +209,10 @@ namespace P2PIM_Client
             Trace.TraceInformation("P2PIM Trace =>Send completed.");
         }
 
-        private async Task SendChatMessageAsync()
-        {
-            string[] splitString = ObjChatTo.LocalIpEndPoint.Split(':');
-            IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse(splitString[0]), int.Parse(splitString[1]));
-            UdpClient sendUdpClient = new UdpClient(0);
-            Byte[] bytesSend = Encoding.UTF8.GetBytes(string.Format("chat,{0},{1}", DateTime.Now, ChatContent));
-            await sendUdpClient.SendAsync(bytesSend, bytesSend.Length, remoteEndPoint);
-            sendUdpClient.Close();
-        }
-
         private async Task ReceiveMessageAsync()
         {
             Trace.TraceInformation("Begin receive message");
-            IPEndPoint localIpEndPoint = new IPEndPoint(IPAddress.Parse(LocalIP), LocalPort);
+            IPEndPoint localIpEndPoint = new IPEndPoint(IPAddress.Parse(LocalIp), LocalPort);
             _receiveUdpClient = new UdpClient(localIpEndPoint);
             while (true)
             {
@@ -284,21 +274,25 @@ namespace P2PIM_Client
                         break;
                     case "login":
                         Trace.TraceInformation("User {0}[{1}] join", userName, ipEndPoint);
-                        OnlineUsersList.Add(new User(userName, ipEndPoint));
+                        _onlineUsersList.Add(new User(userName, ipEndPoint));
                         break;
                     case "logout":
-                        DisplayUserList();
-                        for (int i = 0; i < OnlineUsersList.Count; i++)
+                        //DisplayUserList();
+                        for (int i = 0; i < _onlineUsersList.Count; i++)
                         {
-                            if (!OnlineUsersList[i].LocalIpEndPoint.Equals(ipEndPoint)) continue;
+                            if (!_onlineUsersList[i].LocalIpEndPoint.Equals(ipEndPoint)) continue;
                             Trace.TraceInformation("Remove index=" + i);
-                            OnlineUsersList.RemoveAt(i);
+                            _onlineUsersList.RemoveAt(i);
                             break;
                         }
                         
-                        //OnlineUsersList.Remove(new UserInfo(userName, ipEndPoint));
-                        DisplayUserList();
+                        //DisplayUserList();
                         Trace.TraceInformation("User {0}[{1}] exit", userName, ipEndPoint);
+                        break;
+                    case "chat":
+                        string peerTime = splitString[3];
+                        string chatContent = splitString[4];
+                        AppendReceivedChatInfo(userName, ipEndPoint, peerTime, chatContent);
                         break;
                     default:
                         Trace.TraceInformation("Request type is invalid");
@@ -311,7 +305,7 @@ namespace P2PIM_Client
             }
         }
 
-        private void DisplayUserList()
+        /*private void DisplayUserList()
         {
             Trace.TraceInformation(">>>Begin Display");
             foreach(var user in OnlineUsersList)
@@ -319,7 +313,7 @@ namespace P2PIM_Client
                 Trace.TraceInformation("{0}[{1}]", user.UserName, user.LocalIpEndPoint);
             }
             Trace.TraceInformation(">>>End Display");
-        }
+        }*/
 
         private async Task GetOnlineUsersListAsync()
         {
@@ -329,7 +323,7 @@ namespace P2PIM_Client
                 try
                 {
                     string resultReceived = await _readerStream.ReadLineAsync();
-                    Trace.TraceInformation("Received message:[{0}] exit", resultReceived);
+                    Trace.TraceInformation("Received message:[{0}]", resultReceived);
                     if (resultReceived.EndsWith("end"))
                     {
                         string[] splitString = resultReceived.Split(';');
@@ -337,7 +331,7 @@ namespace P2PIM_Client
                         {
                             string[] userString = splitString[i].Split(',');
                             var newUser = new User(userString[0], userString[1]);
-                            OnlineUsersList.Add(newUser);
+                            _onlineUsersList.Add(newUser);
                         }
                         break;
                     }
@@ -355,7 +349,28 @@ namespace P2PIM_Client
 
         private void ClearOnlineUsersList()
         {
-            OnlineUsersList.Clear();
+            _onlineUsersList.Clear();
+        }
+
+        private void AppendReceivedChatInfo(string peerName, string peerEndPoint, string peerTime, string message)
+        {
+            WinChat peerChat = null;
+            foreach (var winChat in _winChatList)
+            {
+                if (!peerEndPoint.Equals(winChat.UserChatTo.LocalIpEndPoint)) continue;
+                peerChat = winChat;
+                break;
+            }
+
+            if (peerChat == null)
+            {
+                User peerUser = new User(peerName, peerEndPoint);
+                string currentEndPoint = string.Format("{0}:{1}", LocalIp, LocalPort);
+                peerChat = new WinChat(peerUser, currentEndPoint, UserName);
+            }
+
+            if(!peerChat.IsActive) peerChat.Activate();
+            peerChat.AppendChatInfo(peerName, peerTime, message);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -364,6 +379,20 @@ namespace P2PIM_Client
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void lvItem_DoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            User selectedUser = lvOnlineUser.SelectedItem as User;
+            if (selectedUser == null) return;//no one selected
+
+            string selectedEndPoint = selectedUser.LocalIpEndPoint;
+            string currentEndPoint = string.Format("{0}:{1}", LocalIp, LocalPort);
+            if (selectedEndPoint.Equals(currentEndPoint)) return;//the user select himself
+            
+            WinChat newChat = new WinChat(selectedUser, currentEndPoint, UserName);
+            _winChatList.Add(newChat);
+            newChat.Show();
         }
     }
 }

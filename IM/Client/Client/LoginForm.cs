@@ -34,8 +34,8 @@ namespace Client
         {
             InitializeComponent();
             IPAddress[] localIP = Dns.GetHostAddresses("");
-            txtserverIP.Text = localIP[1].ToString();
-            txtLocalIP.Text = localIP[1].ToString();
+            txtserverIP.Text = localIP[0].ToString();
+            txtLocalIP.Text = localIP[0].ToString();
             // 随机指定本地端口
             Random random = new Random();
             port = random.Next(1024,65500);

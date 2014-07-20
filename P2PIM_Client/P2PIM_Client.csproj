@@ -53,6 +53,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="User.cs" />
     <Compile Include="WinChat.xaml.cs">
       <DependentUpon>WinChat.xaml</DependentUpon>

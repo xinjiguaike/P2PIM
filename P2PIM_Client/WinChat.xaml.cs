@@ -1,7 +1,10 @@
-﻿using P2PService;
+﻿using System.Diagnostics;
+using P2PService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,34 +23,26 @@ namespace P2PIM_Client
     /// </summary>
     public partial class WinChat : Window
     {
-        private AsyncService serviceAsync;
-        private bool isInputting;
+        public readonly User UserChatTo;
+        private bool _isInputting;
+        private readonly string _userName;
+        private readonly string _localEndPoint;
 
-        public WinChat()
+        public WinChat(User userChatTo, string localEndPoint, string userName)
         {
             InitializeComponent();
-            serviceAsync = new AsyncService();
-            this.DataContext = serviceAsync;
-        }
-
-        private async void OnSendMessage(object sender, RoutedEventArgs e)
-        {
-            await serviceAsync.SendMessageAsync(tbMessageSend.Text);
-            tbMessageSend.Text = "";
-        }
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            //Settings.Default.Save();
-            serviceAsync.StopConnect();
-            serviceAsync.StopListen();
+            UserChatTo = userChatTo;
+            _localEndPoint = localEndPoint;
+            _userName = userName;
+            this.Title = UserChatTo.UserName;
         }
 
         private async void Window_KeyUp(object sender, KeyEventArgs e)
         {
-            if((e.Key == Key.Enter) && tbMessageSend.IsFocused && !isInputting)
+            if((e.Key == Key.Enter) && tbMessageSend.IsFocused && !_isInputting)
             {
-                await serviceAsync.SendMessageAsync(tbMessageSend.Text);
+                await SendChatMessageAsync(tbMessageSend.Text);
+                AppendChatInfo(_userName, DateTime.Now.ToLongTimeString(), tbMessageSend.Text);
                 tbMessageSend.Text = "";
             }
              
@@ -55,22 +50,50 @@ namespace P2PIM_Client
 
         private void tbMessageSend_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            isInputting = false;
+            _isInputting = false;
         }
 
         private void tbMessageSend_TextChanged(object sender, TextChangedEventArgs e)
         {
-            isInputting = true;
+            _isInputting = true;
         }
 
-        private void btnSend_Click(object sender, RoutedEventArgs e)
+        private async void btnSend_Click(object sender, RoutedEventArgs e)
         {
-
+            await SendChatMessageAsync(tbMessageSend.Text);
+            AppendChatInfo(_userName, DateTime.Now.ToLongTimeString(), tbMessageSend.Text);
+            tbMessageSend.Text = "";
         }
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+
+        private async Task SendChatMessageAsync(string message)
+        {
+            if (message.Equals(""))
+            {
+                MessageBox.Show(this, "The message to send could not be empty!");
+                return;
+            }
+            string[] splitString = UserChatTo.LocalIpEndPoint.Split(':');
+            IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse(splitString[0]), int.Parse(splitString[1]));
+            UdpClient sendUdpClient = new UdpClient(0);
+            
+            Trace.TraceInformation("P2PIM Trace =>Sending message to [{0},{1}]", UserChatTo.UserName, UserChatTo.LocalIpEndPoint);
+            
+            Byte[] bytesSend = Encoding.UTF8.GetBytes(string.Format("chat,{0},{1},{2},{3}", _userName, _localEndPoint, DateTime.Now.ToLongTimeString(), message));
+            await sendUdpClient.SendAsync(bytesSend, bytesSend.Length, remoteEndPoint);
+
+            sendUdpClient.Close();
+        }
+
+        public void AppendChatInfo(string peerName, string time, string content)
+        {
+            tbChatContent.AppendText(peerName + "    " + time + Environment.NewLine + content + Environment.NewLine);
+            tbChatContent.ScrollToEnd();
         }
 
     }

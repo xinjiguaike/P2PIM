@@ -9,7 +9,7 @@
         <TextBox x:Name="tbServerPort" HorizontalAlignment="Left" TextAlignment="Center" Height="23" Margin="260,27,0,0" TextWrapping="Wrap" Text="{Binding ServerPort}" VerticalAlignment="Top" Width="49"/>
         <Label Content=":" HorizontalAlignment="Left" Margin="241,25,0,0" VerticalAlignment="Top" Width="19" Height="23"/>
         <Label Content="Local IP" HorizontalAlignment="Left" Margin="36,108,0,0" VerticalAlignment="Top" Width="55"/>
-        <TextBox x:Name="tbLocalIP" HorizontalAlignment="Left" TextAlignment="Center" Height="23" Margin="112,111,0,0" TextWrapping="Wrap" Text="{Binding LocalIP}" VerticalAlignment="Top" Width="123"/>
+        <TextBox x:Name="tbLocalIP" HorizontalAlignment="Left" TextAlignment="Center" Height="23" Margin="112,111,0,0" TextWrapping="Wrap" Text="{Binding LocalIp}" VerticalAlignment="Top" Width="123"/>
         <TextBox x:Name="tbLocalPort" HorizontalAlignment="Left" TextAlignment="Center" Height="23" Margin="260,111,0,0" TextWrapping="Wrap" Text="{Binding LocalPort}" VerticalAlignment="Top" Width="49"/>
         <Label Content=":" HorizontalAlignment="Left" Margin="241,108,0,0" VerticalAlignment="Top" Width="19" Height="23"/>
         <Label Content="UserName" HorizontalAlignment="Left" Margin="36,69,0,0" VerticalAlignment="Top" Width="76"/>
@@ -17,7 +17,7 @@
         <Button x:Name="btnLogin" Content="Login" HorizontalAlignment="Left" Margin="71,154,0,0" VerticalAlignment="Top" Width="75" Click="btnLogin_Click"/>
         <Button x:Name="btnLogout" IsEnabled="False" Content="Logout" HorizontalAlignment="Left" Margin="194,154,0,0" VerticalAlignment="Top" Width="75" Click="btnLogout_Click"/>
         <Label Content="Online Users :" HorizontalAlignment="Left" Margin="36,195,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.5,0.462" Width="110"/>
-        <ListView x:Name="lvOnlineUser" HorizontalAlignment="Left" Height="259" Margin="36,226,0,0" VerticalAlignment="Top" Width="273">
+        <ListView x:Name="lvOnlineUser" MouseDoubleClick="lvItem_DoubleClick" HorizontalAlignment="Left" Height="259" Margin="36,226,0,0" VerticalAlignment="Top" Width="273">
             <ListView.View>
                 <GridView>
                         <GridViewColumn Width="120" DisplayMemberBinding="{Binding Path=UserName}">
