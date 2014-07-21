@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -224,7 +225,7 @@ namespace P2PIM_Server
             Log(string.Format("Accept user {0}[{1}]", user.UserName, user.LocalIpEndPoint));
 
             UdpClient udpClient = new UdpClient(0);
-            Byte[] bytesSend = Encoding.UTF8.GetBytes("Accept," + _tcpPort.ToString());
+            Byte[] bytesSend = Encoding.UTF8.GetBytes("Accept," + _tcpPort);
             string[] splitString = user.LocalIpEndPoint.Split(':');
             if(splitString.Length == 2)
             {
