@@ -123,8 +123,8 @@ namespace P2PIM_Client
             new Action(async () => await SetLocalIpAsync())();
             Random random = new Random();
             LocalPort = random.Next(1024, 65500);
-            ServerIp = "192.168.1.11";
-            ServerPort = 5000;
+            ServerIp = "173.39.170.96";
+            ServerPort = 28010;
             MsgRecord = "";
             _onlineUsersList = new ObservableCollection<User>();
             _winChatList = new List<WinChat>();
@@ -395,6 +395,11 @@ namespace P2PIM_Client
             WinChat newChat = new WinChat(selectedUser, currentEndPoint, UserName);
             _winChatList.Add(newChat);
             newChat.Show();
+        }
+
+        private void TbUserName_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            this.Title = tbUserName.Text;
         }
     }
 }
