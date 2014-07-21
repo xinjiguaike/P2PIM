@@ -367,6 +367,8 @@ namespace P2PIM_Client
                 User peerUser = new User(peerName, peerEndPoint);
                 string currentEndPoint = string.Format("{0}:{1}", LocalIp, LocalPort);
                 peerChat = new WinChat(peerUser, currentEndPoint, UserName);
+                _winChatList.Add(peerChat);
+                peerChat.Show();
             }
 
             if(!peerChat.IsActive) peerChat.Activate();
