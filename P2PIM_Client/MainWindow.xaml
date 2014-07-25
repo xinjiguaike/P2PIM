@@ -2,7 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="535" Width="356"
-        Closed="Window_Closed">    
+        Closed="Window_Closed"
+        Closing="Window_Closing">    
     <Grid>
         <Label Content="Server" HorizontalAlignment="Left" Margin="36,24,0,0" VerticalAlignment="Top" Width="55"/>
         <TextBox x:Name="tbServerIP" HorizontalAlignment="Left" TextAlignment="Center" Height="23" Margin="112,27,0,0" TextWrapping="Wrap" Text="{Binding ServerIp}" VerticalAlignment="Top" Width="123"/>

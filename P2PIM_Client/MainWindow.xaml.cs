@@ -124,7 +124,7 @@ namespace P2PIM_Client
             Random random = new Random();
             LocalPort = random.Next(1024, 65500);
             ServerIp = "173.39.170.96";
-            ServerPort = 28010;
+            ServerPort = 61864;
             MsgRecord = "";
             _onlineUsersList = new ObservableCollection<User>();
             _winChatList = new List<WinChat>();
@@ -152,6 +152,7 @@ namespace P2PIM_Client
 
         private async void btnLogout_Click(object sender, RoutedEventArgs e)
         {
+            if (!ConfirmToQuit()) return;
             await SendLogInOutMessageAsync("logout");
             CloseAllConnection();
             ClearOnlineUsersList();
@@ -166,6 +167,32 @@ namespace P2PIM_Client
             if(_isOnline)
                 await SendLogInOutMessageAsync("logout");
             CloseAllConnection();
+        }
+
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            if (!ConfirmToQuit()) 
+                e.Cancel = true;
+        }
+
+        private bool ConfirmToQuit()
+        {
+            bool isOpen = _winChatList.Count > 0;
+            if (isOpen)
+            {
+                var mbResult = MessageBox.Show(this, "You're in chatting, really want to quit?", "", MessageBoxButton.OKCancel);
+                if (mbResult == MessageBoxResult.OK)
+                {
+                    for (int i = 0; i < _winChatList.Count; i++)
+                    {
+                        _winChatList[i].Close();
+                    }
+                    return true;
+                }
+                return false;
+            }
+            return true;
         }
 
 
@@ -277,17 +304,18 @@ namespace P2PIM_Client
                         _onlineUsersList.Add(new User(userName, ipEndPoint));
                         break;
                     case "logout":
-                        //DisplayUserList();
                         for (int i = 0; i < _onlineUsersList.Count; i++)
                         {
                             if (!_onlineUsersList[i].LocalIpEndPoint.Equals(ipEndPoint)) continue;
-                            Trace.TraceInformation("Remove index=" + i);
                             _onlineUsersList.RemoveAt(i);
                             break;
                         }
-                        
-                        //DisplayUserList();
                         Trace.TraceInformation("User {0}[{1}] exit", userName, ipEndPoint);
+                        foreach (var winChat in _winChatList)
+                        {
+                            if (ipEndPoint.Equals(winChat.UserChatTo.LocalIpEndPoint))
+                                winChat.IsOnline = false;
+                        }
                         break;
                     case "chat":
                         string peerTime = splitString[3];
@@ -367,12 +395,13 @@ namespace P2PIM_Client
                 User peerUser = new User(peerName, peerEndPoint);
                 string currentEndPoint = string.Format("{0}:{1}", LocalIp, LocalPort);
                 peerChat = new WinChat(peerUser, currentEndPoint, UserName);
+                peerChat.PassDataBetweenWindow += ChatWindowClosed;
                 _winChatList.Add(peerChat);
                 peerChat.Show();
             }
 
             if(!peerChat.IsActive) peerChat.Activate();
-            peerChat.AppendChatInfo(peerName, peerTime, message);
+            peerChat.AppendChatInfo(peerName, peerTime, message, false);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -393,8 +422,23 @@ namespace P2PIM_Client
             if (selectedEndPoint.Equals(currentEndPoint)) return;//the user select himself
             
             WinChat newChat = new WinChat(selectedUser, currentEndPoint, UserName);
+            newChat.PassDataBetweenWindow += ChatWindowClosed;
             _winChatList.Add(newChat);
             newChat.Show();
+            newChat.Activate();
+        }
+
+        private void ChatWindowClosed(object sender, PassDataWinEventArgs e)
+        {
+            for (int i = 0; i < _winChatList.Count; i++)
+            {
+                Trace.TraceInformation("P2PIM Trace =>I'm Here1");
+                if (!_winChatList[i].UserChatTo.LocalIpEndPoint.Equals(e.LocalIpEndPoint)) continue;
+                _winChatList.RemoveAt(i);
+                Trace.TraceInformation("P2PIM Trace =>I'm Here2");
+                break;
+            }
+            
         }
 
         private void TbUserName_OnTextChanged(object sender, TextChangedEventArgs e)

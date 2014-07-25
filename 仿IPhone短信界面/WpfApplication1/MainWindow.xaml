@@ -1,0 +1,13 @@
+﻿<Window x:Class="WpfApplication1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <RichTextBox x:Name="rtbChat" IsReadOnly="True" Background="White" VerticalScrollBarVisibility="Auto" Margin="0,0,0,148">
+            <FlowDocument x:Name="fdChatContent" LineHeight="10">
+
+            </FlowDocument>
+        </RichTextBox>
+        <Button Content="Add" HorizontalAlignment="Left" Margin="227,246,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+    </Grid>
+</Window>
