@@ -14,8 +14,8 @@ namespace P2PIM_Server
 {
     public class User
     {
-        public string UserName;
-        public string LocalIpEndPoint;
+        public readonly string UserName;
+        public readonly string LocalIpEndPoint;
     
         public User(string name, string endpoint)
         {
